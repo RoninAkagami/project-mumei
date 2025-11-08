@@ -1,0 +1,151 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: mumei-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - mumei-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  state-manager:
+    build:
+      context: .
+      dockerfile: agents/state_manager/Dockerfile
+    container_name: mumei-state-manager
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config
+      - ./evidence:/app/evidence
+    networks:
+      - mumei-network
+
+  tactical-coordinator:
+    build:
+      context: .
+      dockerfile: agents/tactical_coordinator/Dockerfile
+    container_name: mumei-tactical-coordinator
+    depends_on:
+      - redis
+      - state-manager
+    environment:
+      - REDIS_HOST=redis
+      - AGENT_ID=tactical_coordinator_01
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./config:/app/config
+    networks:
+      - mumei-network
+
+  surface-mapper-passive:
+    build:
+      context: .
+      dockerfile: agents/surface_mapper/Dockerfile
+    container_name: mumei-surface-mapper-passive
+    depends_on:
+      - redis
+      - state-manager
+    environment:
+      - REDIS_HOST=redis
+      - AGENT_ID=surface_mapper_passive_01
+      - AGENT_MODE=passive
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    networks:
+      - mumei-network
+
+  surface-mapper-active:
+    build:
+      context: .
+      dockerfile: agents/surface_mapper/Dockerfile
+    container_name: mumei-surface-mapper-active
+    depends_on:
+      - redis
+      - state-manager
+    environment:
+      - REDIS_HOST=redis
+      - AGENT_ID=surface_mapper_active_01
+      - AGENT_MODE=active
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    networks:
+      - mumei-network
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+  service-profiler-http:
+    build:
+      context: .
+      dockerfile: agents/service_profiler/Dockerfile
+    container_name: mumei-service-profiler-http
+    depends_on:
+      - redis
+      - state-manager
+    environment:
+      - REDIS_HOST=redis
+      - AGENT_ID=service_profiler_http_01
+      - PROTOCOL_FILTER=http,https
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    networks:
+      - mumei-network
+
+  exploitation-engineer:
+    build:
+      context: .
+      dockerfile: agents/exploitation_engineer/Dockerfile
+    container_name: mumei-exploitation-engineer
+    depends_on:
+      - redis
+      - state-manager
+    environment:
+      - REDIS_HOST=redis
+      - AGENT_ID=exploitation_engineer_01
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./evidence:/app/evidence
+    networks:
+      - mumei-network
+    cap_add:
+      - NET_RAW
+
+volumes:
+  redis-data:
+
+networks:
+  mumei-network:
+    driver: bridge
