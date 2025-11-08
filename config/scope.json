@@ -1,0 +1,29 @@
+{
+  "engagement_name": "Example Penetration Test",
+  "targets": [
+    "192.168.1.0/24",
+    "testapp.example.com"
+  ],
+  "excluded": [
+    "192.168.1.1",
+    "192.168.1.254"
+  ],
+  "rules_of_engagement": {
+    "max_concurrent_scans": 5,
+    "rate_limit_delay": 1.0,
+    "stealth_mode": false,
+    "allowed_hours": {
+      "start": "09:00",
+      "end": "17:00",
+      "timezone": "UTC"
+    },
+    "destructive_tests_allowed": false,
+    "dos_tests_allowed": false
+  },
+  "objectives": [
+    "Identify all exposed services",
+    "Discover vulnerabilities with CVSS >= 7.0",
+    "Attempt exploitation of critical vulnerabilities",
+    "Document evidence of successful compromises"
+  ]
+}
