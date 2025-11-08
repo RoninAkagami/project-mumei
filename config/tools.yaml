@@ -1,0 +1,52 @@
+tools:
+  nmap:
+    path: nmap
+    default_args: ["-sV", "-sC", "--open"]
+    timeout: 300
+    
+  nikto:
+    path: nikto
+    default_args: ["-Format", "json"]
+    timeout: 600
+    
+  gobuster:
+    path: gobuster
+    default_args: ["dir", "-q"]
+    timeout: 300
+    wordlist: /usr/share/wordlists/dirb/common.txt
+    
+  sqlmap:
+    path: sqlmap
+    default_args: ["--batch", "--random-agent"]
+    timeout: 600
+    
+  hydra:
+    path: hydra
+    default_args: ["-V"]
+    timeout: 300
+    
+  metasploit:
+    path: msfconsole
+    default_args: ["-q", "-x"]
+    timeout: 600
+
+cli_tools_available:
+  - nmap
+  - nikto
+  - gobuster
+  - sqlmap
+  - hydra
+  - curl
+  - wget
+  - nc (netcat)
+  - dig
+  - host
+  - whois
+  - enum4linux
+  - smbclient
+  - crackmapexec
+  - john
+  - hashcat
+  - searchsploit
+  - msfvenom
+  - msfconsole
