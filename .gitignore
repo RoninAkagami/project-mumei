@@ -1,0 +1,10 @@
+# All the sensitive files
+.env
+.env.local
+
+# Progress Things
+DEPLOYEMENT_CHECKLIST.md
+
+# Agent Directories
+.qodo/
+.kiro/
