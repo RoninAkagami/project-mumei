@@ -16,7 +16,11 @@ class TestDeployment:
     """Test class for deployment operations"""
     
     def test_write_scope_config(self):
-        """Write the scope configuration to the JSON file"""
+        """
+        Write a predefined engagement scope configuration to ../../config/scope.json.
+        
+        Creates the parent directory if it does not exist and serializes a default scope object (engagement metadata, targets, rules of engagement, and objectives) as formatted JSON to that file.
+        """
         scope_data = {
             "engagement_name": "OWASP Juice Shop Demo test",
             "targets": [
@@ -74,17 +78,29 @@ class TestDeployment:
             print("✗ Failed to make scripts executable")
     
     def test_run_start_script(self):
-        """Run the start.sh script"""
+        """
+        Start the project's environment by running the scripts/start.sh script.
+        
+        This invokes the repository's start script and may start containers or background services as defined by that script.
+        """
         print("\n--- Running start.sh ---")
         subprocess.run(['./scripts/start.sh'])
     
     def test_run_init_engagement(self):
-        """Run the init_engagement.sh script"""
+        """
+        Run the engagement initialization script.
+        
+        Executes the external script at ./scripts/init_engagement.sh to perform project-specific engagement initialization.
+        """
         print("\n--- Running init_engagement.sh ---")
         subprocess.run(['./scripts/init_engagement.sh'])
     
     def test_run_docker_logs(self):
-        """Run docker-compose logs with follow, handle Ctrl+C"""
+        """
+        Stream Docker Compose logs in follow mode until interrupted.
+        
+        Prints a header before starting log streaming and prints a stop message when interrupted (Ctrl+C).
+        """
         print("\n--- Running docker-compose logs (Press Ctrl+C to stop) ---")
         try:
             subprocess.run(['docker-compose', 'logs', '-f'])
@@ -92,7 +108,11 @@ class TestDeployment:
             print("\n\n✓ Received Ctrl+C, stopping services...")
     
     def test_run_stop_script(self):
-        """Run the stop.sh script"""
+        """
+        Execute the project's stop.sh script to stop running services.
+        
+        Blocks until the script completes; the script's stdout and stderr are forwarded to the current process.
+        """
         print("\n--- Running stop.sh ---")
         subprocess.run(['./scripts/stop.sh'])
     
