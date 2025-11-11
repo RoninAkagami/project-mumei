@@ -3,6 +3,7 @@ System Test which gives a demo of project-mumei up and running.
 Currently testing engagement aganist OWASP Juice shop mirror website.
 Requires .env (or) .env.local to be setup in the /tests/system/ directory.
 All prerequistsies as listed in SETUP_AND_USAGE.md are to be there.
+This file requires redis too!
 """
 
 import subprocess
