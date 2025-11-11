@@ -14,6 +14,8 @@ tests/
 │   └── test_state_manager.py # State manager tests
 ├── integration/             # Integration tests
 │   └── test_blackboard.py  # Blackboard/Redis tests
+├── system/                  # System tests
+│   └── test_deployment.py  # Full deployment and engagement tests
 └── README.md               # This file
 ```
 
@@ -32,6 +34,11 @@ pytest tests/unit/
 ### Integration Tests Only
 ```bash
 pytest tests/integration/
+```
+
+### System Tests Only
+```bash
+pytest tests/system/
 ```
 
 ### Specific Test File
@@ -100,6 +107,36 @@ pytest -s
   - Concurrent operations
   - Real agent communication flows
 
+### System Tests
+- **test_deployment.py**: End-to-end deployment and engagement tests
+  - Scope configuration setup (config/scope.json)
+  - Environment file management (.env.local/.env)
+  - Script permissions and execution
+  - Service startup (start.sh)
+  - Engagement initialization (init_engagement.sh)
+  - Docker container log monitoring
+  - Graceful shutdown procedures (stop.sh)
+  - Full deployment workflow orchestration
+
+#### Running System Tests
+
+**Full deployment test** (executes complete workflow):
+```bash
+python tests/system/test_deployment.py
+```
+
+**With pytest** (runs specific test methods):
+```bash
+# Run full deployment
+pytest tests/system/test_deployment.py::TestDeployment::test_full_deployment
+
+# Run individual steps
+pytest tests/system/test_deployment.py::TestDeployment::test_write_scope_config
+pytest tests/system/test_deployment.py::TestDeployment::test_run_start_script
+```
+
+**Note**: System tests require Docker and docker-compose to be installed and running. Press Ctrl+C during log monitoring to trigger graceful shutdown.
+
 ## Prerequisites
 
 ### For Unit Tests
@@ -116,6 +153,16 @@ docker run -d -p 6379:6379 redis:7-alpine
 docker-compose up -d redis
 ```
 
+### For System Tests
+```bash
+# Requires Docker and docker-compose
+docker --version
+docker-compose --version
+
+# Ensure scripts directory exists with executable shell scripts
+ls -la scripts/
+```
+
 ### For Coverage Reports
 ```bash
 pip install pytest-cov
@@ -127,6 +174,7 @@ Tests are marked with pytest markers for selective execution:
 
 - `@pytest.mark.unit`: Unit tests (no external dependencies)
 - `@pytest.mark.integration`: Integration tests (require Redis)
+- `@pytest.mark.system`: System tests (require Docker/services)
 - `@pytest.mark.slow`: Slow-running tests
 - `@pytest.mark.agent`: Agent-specific tests
 
@@ -138,6 +186,11 @@ pytest -m unit
 ### Run Only Integration Tests
 ```bash
 pytest -m integration
+```
+
+### Run Only System Tests
+```bash
+pytest -m system
 ```
 
 ### Skip Slow Tests
@@ -215,6 +268,23 @@ class TestIntegration:
         pass
 ```
 
+### System Test Template
+```python
+import pytest
+import subprocess
+
+class TestSystemFeature:
+    """System test for feature"""
+    
+    def test_feature_deployment(self):
+        """Test feature deployment workflow"""
+        # Setup
+        # Execute
+        # Verify
+        # Cleanup
+        pass
+```
+
 ## Test Coverage Goals
 
 - **Unit Tests**: >80% code coverage
@@ -240,6 +310,21 @@ docker-compose up -d redis
 
 # Test Redis connection
 redis-cli ping
+```
+
+### Docker/System Test Errors
+```bash
+# Check Docker status
+docker ps
+
+# Check docker-compose services
+docker-compose ps
+
+# View service logs
+docker-compose logs
+
+# Stop all services
+./scripts/stop.sh
 ```
 
 ### Import Errors
@@ -269,6 +354,7 @@ pytest --timeout=10
 5. **Documentation**: Add docstrings to test classes and methods
 6. **Assertions**: Use specific assertions with clear messages
 7. **Cleanup**: Always clean up resources (use fixtures with yield)
+8. **System Tests**: Ensure proper cleanup even on test failure
 
 ## Contributing
 
