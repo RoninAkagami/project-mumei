@@ -1,12 +1,6 @@
 # Project Mumei
 ## A Collaborative Multi-Agent System for Autonomous Penetration Testing
 
-[![Status](https://img.shields.io/badge/status-production--ready-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-1.0-blue)]()
-[![Python](https://img.shields.io/badge/python-3.11+-blue)]()
-[![Docker](https://img.shields.io/badge/docker-required-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
-
 > **⚠️ LEGAL WARNING**: This tool is designed for authorized security testing only. Unauthorized access to computer systems is illegal. Users are solely responsible for complying with all applicable laws and regulations.
 
 ---
@@ -663,4 +657,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Project Mumei** - Next-generation autonomous penetration testing through collaborative multi-agent intelligence.
 
 *Built by Sai Nideesh Kotagudem*
+
 *a.k.a Ronin Akagami*
